@@ -23,4 +23,12 @@ router.get("/reset-password/:token", (req, res) => {
   });
 });
 
+router.get("/logout", (req, res) => {
+  // Clear the JWT cookie
+  res.clearCookie("jwt");
+
+  // Redirect to the login page or any other page you prefer
+  res.redirect("/login");
+});
+
 module.exports = router;

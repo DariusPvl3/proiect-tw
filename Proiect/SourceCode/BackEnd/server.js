@@ -55,7 +55,7 @@ app.use(checkUserRole);
 app.use(authMiddleware);
 
 // Routes for different user roles
-app.get("/admin/home", authMiddleware, (req, res) => {
+app.get("/admin/home", (req, res) => {
   res.render("../Admin/admin-home");
 });
 

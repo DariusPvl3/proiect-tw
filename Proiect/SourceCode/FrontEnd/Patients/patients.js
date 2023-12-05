@@ -1,19 +1,22 @@
-const menuToggle = document.querySelector(".menu-toggle");
+const menu_toggle = document.querySelector(".menu-toggle");
 const sidebar = document.querySelector(".sidebar");
 
-menuToggle.addEventListener("click", () => {
-  menuToggle.classList.toggle("is-active");
+menu_toggle.addEventListener("click", () => {
+  menu_toggle.classList.toggle("is-active");
   sidebar.classList.toggle("is-active");
 });
 
 const imageFolderPath = "../Images/";
 
 function renderDoctors(doctors, searchQuery = "") {
+  // Get the current active page
   const activePage = document
     .querySelector(".menu-item.active")
     .getAttribute("data-page");
 
+  // Check if the current active page is "Appointments"
   if (activePage !== "appointments") {
+    // If not "Appointments," do nothing and return
     return;
   }
 
@@ -23,14 +26,17 @@ function renderDoctors(doctors, searchQuery = "") {
 
   const doctorsContainer = document.querySelector(".doctors-container");
 
+  // Check if doctorsContainer is null before proceeding
   if (!doctorsContainer) {
     console.error("Error: doctorsContainer is null");
     return;
   }
 
+  // Clear existing content in the container
   doctorsContainer.innerHTML = "";
 
   doctors.forEach((doctor) => {
+    // Check if the doctor's name or specialization includes the search query
     if (
       doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       doctor.specialization.toLowerCase().includes(searchQuery.toLowerCase())
@@ -72,6 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   menuItems.forEach((menuItem) => {
     const page = menuItem.getAttribute("data-page");
 
+    // Only add click event listener for links that should load dynamically
     if (page !== "logout") {
       menuItem.addEventListener("click", async (event) => {
         event.preventDefault();
@@ -84,11 +91,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const defaultPage = currentPath || "home";
   setActiveLink(defaultPage);
 
+  // Trigger the initial load when the page is refreshed
   loadPage(defaultPage);
 });
 
+// Add a separate event listener for the logout link
 const logoutLink = document.querySelector(".menu-item[data-page='logout']");
 logoutLink.addEventListener("click", () => {
+  // Simply follow the logout link without preventing the default behavior
   window.location.href = logoutLink.getAttribute("href");
 });
 
@@ -106,39 +116,23 @@ function setActiveLink(page) {
   });
 }
 
-document.addEventListener("click", (event) => {
-  const sidebar = document.querySelector(".sidebar");
-  const menuToggle = document.querySelector(".menu-toggle");
-
-  if (!sidebar.contains(event.target) && !menuToggle.contains(event.target)) {
-    if (sidebar.classList.contains("is-active")) {
-      sidebar.classList.remove("is-active");
-
-      menuToggle.classList.remove("is-active", "hamburger-active");
-    }
-  }
-});
-
 async function loadPage(page) {
   try {
+    // Fetch the content for the specified page
     const response = await fetch(`/patient/${page}`);
     const pageContent = await response.text();
 
-    const sidebar = document.querySelector(".sidebar");
-    sidebar.classList.remove("is-active");
-    menuToggle.classList.remove("is-active");
-
+    // Replace the content in the .main-content container
     document.querySelector(".main-content").innerHTML = pageContent;
 
+    // Set the active link when a new page is loaded
     setActiveLink(page);
 
-
+    // Re-fetch and render doctors for "appointments" page
     if (page === "appointments") {
-
-    if (page === "home") {
-
       await fetchAndRenderDoctors();
 
+      // Add an event listener for the search input if it exists
       const searchInput = document.getElementById("searchInput");
       if (searchInput) {
         searchInput.addEventListener("input", () => {
@@ -149,8 +143,8 @@ async function loadPage(page) {
         const clearSearchIcon = document.getElementById("clearSearch");
         if (clearSearchIcon) {
           clearSearchIcon.addEventListener("click", () => {
-            searchInput.value = "";
-            fetchAndRenderDoctors();
+            searchInput.value = ""; // Clear the search input
+            fetchAndRenderDoctors(); // Fetch and render doctors with an empty search query
           });
         }
       }

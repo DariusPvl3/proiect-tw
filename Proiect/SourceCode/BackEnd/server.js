@@ -286,6 +286,19 @@ app.get(
   }
 );
 
+app.get(
+  "/patient/appointment-form",
+  authMiddleware,
+  checkUserRole,
+  (req, res) => {
+    if (req.userRole === "patient") {
+      res.render("../Patients/appointment-form");
+    } else {
+      res.status(403).send("Forbidden");
+    }
+  }
+);
+
 app.get("/patient/file", authMiddleware, checkUserRole, (req, res) => {
   if (req.userRole === "patient") {
     res.render("../Patients/file");

@@ -58,11 +58,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   setActiveLink(defaultPage);
   fetchUserInfo(defaultPage);
 
+  // Trigger the initial load when the page is refreshed
   loadPage(defaultPage);
 });
 
+// Add a separate event listener for the logout link
 const logoutLink = document.querySelector(".menu-item[data-page='logout']");
 logoutLink.addEventListener("click", () => {
+  // Simply follow the logout link without preventing the default behavior
   window.location.href = logoutLink.getAttribute("href");
 });
 
@@ -83,6 +86,7 @@ function setActiveLink(page) {
 // Functie care incarca continutul paginii alese din sidebar
 async function loadPage(page) {
   try {
+    // Fetch the content for the specified page
     const response = await fetch(`/patient/${page}`);
     const pageContent = await response.text();
 
@@ -91,6 +95,7 @@ async function loadPage(page) {
 
     document.querySelector(".main-content").innerHTML = pageContent;
 
+    // Set the active link when a new page is loaded
     setActiveLink(page);
 
     fetchUserInfo(page);
@@ -99,6 +104,7 @@ async function loadPage(page) {
     if (page === "appointments") {
       await fetchAndRenderDoctors();
 
+      // Add an event listener for the search input if it exists
       const searchInput = document.getElementById("searchInput");
       if (searchInput) {
         searchInput.addEventListener("input", () => {
@@ -109,8 +115,8 @@ async function loadPage(page) {
         const clearSearchIcon = document.getElementById("clearSearch");
         if (clearSearchIcon) {
           clearSearchIcon.addEventListener("click", () => {
-            searchInput.value = "";
-            fetchAndRenderDoctors();
+            searchInput.value = ""; // Clear the search input
+            fetchAndRenderDoctors(); // Fetch and render doctors with an empty search query
           });
         }
       }
